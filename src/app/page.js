@@ -2,9 +2,9 @@
 import React, { useRef } from "react";
 import Toolbar from "../components/Toolbar";
 // import Canvas from "../components/Canvas";
-import DrawPanel from "../components/DrawPanel";
+import DrawPanel from "../components/DrawPanel.js";
 import { ToolProvider } from "../context/ToolContext";
-import PreviewPanel from "@/components/PreviewPanel";
+import PreviewPanel from "../components/PreviewPanel";
 import dynamic from "next/dynamic";
 const Canvas = dynamic(() => import("../components/Canvas"), { ssr: false });
 

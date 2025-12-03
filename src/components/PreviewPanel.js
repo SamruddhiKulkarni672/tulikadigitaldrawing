@@ -1,10 +1,10 @@
 import React, { useRef, useState, useEffect } from "react";
-import Save from "@/assets/Save";
-import Print from "@/assets/Print";
-import ZoomIn from "@/assets/ZoomIn";
-import ZoomOut from "@/assets/ZoomOut";
-import AddReference from "@/assets/AddReference";
-import RemoveReference from "@/assets/RemoveReference";
+import Save from "../assets/Save";
+import Print from "../assets/Print";
+import ZoomIn from "../assets/ZoomIn";
+import ZoomOut from "../assets/ZoomOut";
+import AddReference from "../assets/AddReference";
+import RemoveReference from "../assets/RemoveReference";
 import { useTool } from "../context/ToolContext";
 import defaultRefImage from "../assets/refImage.png";
 

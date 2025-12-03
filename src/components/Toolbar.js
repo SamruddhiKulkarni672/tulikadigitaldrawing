@@ -74,13 +74,13 @@
 import React, { useState } from "react";
 import { useTool } from "../context/ToolContext";
 
-import Select from "@/assets/Select";
-import Undo from "@/assets/Undo";
-import Redo from "@/assets/Redo";
-import Rect from "@/assets/Rect.js";
-import BrushIcon from "@/assets/BrushIcon";
-import Clear from "@/assets/Clear";
-import Pallet from "@/assets/Pallet";
+import Select from "../assets/Select";
+import Undo from "../assets/Undo";
+import Redo from "../assets/Redo";
+import Rect from "../assets/Rect.js";
+import BrushIcon from "../assets/BrushIcon";
+import Clear from "../assets/Clear";
+import Pallet from "../assets/Pallet";
 
 import ColorHistoryModal from "./ColorHistoryModal";
 

@@ -1,8 +1,10 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import { useTool } from "../context/ToolContext";
-import { brushTypes } from "@/utils/Brushes";
-import { dabImages } from "@/utils/Dabs";
+import { brushTypes } from "../utils/Brushes";
+import { dabImages } from "../utils/Dabs";
+import SVGPromptModal from "./SvgPromptModal";
+import DraggableSVG from "./DraggableSVG";
 
 let ffmpeg = null;
 let fetchFileFn = null;
@@ -18,34 +20,28 @@ let fetchFileFn = null;
 //     return ffmpeg;
 // };
 
- 
- 
-
 const getFFmpeg = async () => {
-  if (!ffmpeg) {
-    const ffmpegModule = await import("@ffmpeg/ffmpeg");
-    console.log("FFmpeg module:", ffmpegModule); // 👀 check what’s inside
+    if (!ffmpeg) {
+        const ffmpegModule = await import("@ffmpeg/ffmpeg");
+        console.log("FFmpeg module:", ffmpegModule); // 👀 check what’s inside
 
-    const createFFmpeg =
-      ffmpegModule.createFFmpeg ||
-      (ffmpegModule.default && ffmpegModule.default.createFFmpeg);
+        const createFFmpeg =
+            ffmpegModule.createFFmpeg ||
+            (ffmpegModule.default && ffmpegModule.default.createFFmpeg);
 
-    const fetchFile =
-      ffmpegModule.fetchFile ||
-      (ffmpegModule.default && ffmpegModule.default.fetchFile);
+        const fetchFile =
+            ffmpegModule.fetchFile || (ffmpegModule.default && ffmpegModule.default.fetchFile);
 
-    if (!createFFmpeg || !fetchFile) {
-      throw new Error("❌ Could not find createFFmpeg or fetchFile export");
+        if (!createFFmpeg || !fetchFile) {
+            throw new Error("❌ Could not find createFFmpeg or fetchFile export");
+        }
+
+        ffmpeg = createFFmpeg({ log: true });
+        fetchFileFn = fetchFile;
+        await ffmpeg.load();
     }
-
-    ffmpeg = createFFmpeg({ log: true });
-    fetchFileFn = fetchFile;
-    await ffmpeg.load();
-  }
-  return ffmpeg;
+    return ffmpeg;
 };
-
-
 
 const Canvas = () => {
     const [drawing, setDrawing] = useState(false);
@@ -56,6 +52,9 @@ const Canvas = () => {
     const [resolution, setResolution] = useState("720");
     const [musicFile, setMusicFile] = useState(null);
     const [editing, setEditing] = useState(false);
+
+    const [svgShapes, setSvgShapes] = useState([]);
+    const [topZIndex, setTopZIndex] = useState(1);
 
     const mediaRecorderRef = useRef(null);
     const recordedChunksRef = useRef([]);
@@ -102,6 +101,23 @@ const Canvas = () => {
         const offsetY = e.clientY - rect.top;
         container.style.transformOrigin = `${offsetX}px ${offsetY}px`;
         setZoom(newZoom);
+    };
+
+    const handleMove = (id, x, y) => {
+        setSvgShapes((prev) =>
+            prev.map((shape) => (shape.id === id ? { ...shape, initialPos: { x, y } } : shape))
+        );
+    };
+
+    const handleDelete = (id) => {
+        setSvgShapes((prev) => prev.filter((shape) => shape.id !== id));
+    };
+
+    const handleBringToFront = (id) => {
+        setTopZIndex((prev) => prev + 1);
+        setSvgShapes((prev) =>
+            prev.map((shape) => (shape.id === id ? { ...shape, zIndex: topZIndex + 1 } : shape))
+        );
     };
 
     //  Draw background image
@@ -245,7 +261,7 @@ const Canvas = () => {
                     "crayon",
                     "waterstamp",
                     "eraserBrush",
-                    "pencil"
+                    "pencil",
                 ].includes(settings.brushType) &&
                 brushImage.current
             ) {
@@ -361,37 +377,39 @@ const Canvas = () => {
 
     return (
         <div className="w-full max-w-[1050px] mx-1 space-y-1">
-            <div className="flex items-center space-x-4">
-                {/* Outer Circle */}
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#080808] to-[#2d2f2d] flex items-center justify-center">
-                    {/* Inner Circle */}
-                    <button
-                        onClick={toggleRecording}
-                        className={`w-8 h-8 rounded-full bg-gradient-to-br ${
-                            recording
-                                ? "from-[#ac4e62] to-[#8f4253]"
-                                : "from-[#464648] to-[#2d2d30]"
-                        } flex items-center justify-center shadow-lg`}
-                        style={{ boxShadow: "4px 4px 4px 0px #00000040" }}
-                    >
-                        {/* Icon */}
-                        {recording ? (
-                            <svg fill="white" viewBox="0 0 24 24" className="w-7 h-7">
-                                <rect x="6" y="6" width="12" height="12" />
-                            </svg>
-                        ) : (
-                            <svg fill="#4080C5" viewBox="0 0 24 24" className="w-7 h-7 ml-1">
-                                <path d="M8 5v14l11-7z" />
-                            </svg>
-                        )}
-                    </button>
-                </div>
+           <div className="flex items-center space-x-4">
+    {/* Outer Circle */}
+    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#080808] to-[#2d2f2d] flex items-center justify-center">
+        <button
+            onClick={toggleRecording}
+            className={`w-8 h-8 rounded-full bg-gradient-to-br ${
+                recording ? "from-[#ac4e62] to-[#8f4253]" : "from-[#464648] to-[#2d2d30]"
+            } flex items-center justify-center shadow-lg`}
+            style={{ boxShadow: "4px 4px 4px 0px #00000040" }}
+        >
+            {recording ? (
+                <svg fill="white" viewBox="0 0 24 24" className="w-7 h-7">
+                    <rect x="6" y="6" width="12" height="12" />
+                </svg>
+            ) : (
+                <svg fill="#4080C5" viewBox="0 0 24 24" className="w-7 h-7 ml-1">
+                    <path d="M8 5v14l11-7z" />
+                </svg>
+            )}
+        </button>
+    </div>
 
-                {/* Text */}
-                <span className="text-gray-400 text-lg">
-                    {recording ? "Stop Recording" : "Start Recording"}
-                </span>
-            </div>
+    {/* Text */}
+    <span className="text-gray-400 text-lg">
+        {recording ? "Stop Recording" : "Start Recording"}
+    </span>
+
+    {/* Force the modal button to be inline */}
+    <div className="inline-flex ml-4">
+        <SVGPromptModal setSvgShapes={setSvgShapes} />
+    </div>
+</div>
+
 
             <div ref={canvasContainerRef}>
                 <canvas
@@ -410,6 +428,19 @@ const Canvas = () => {
                     onMouseUp={endDrawing}
                     onMouseLeave={endDrawing}
                 />
+
+                {svgShapes.map((shape) => (
+                    <DraggableSVG
+                        key={shape.id}
+                        id={shape.id}
+                        svgMarkup={shape.svgMarkup}
+                        initialPos={shape.initialPos}
+                        zIndex={shape.zIndex}
+                        onMove={handleMove}
+                        onDelete={handleDelete}
+                        onBringToFront={handleBringToFront}
+                    />
+                ))}
             </div>
 
             {/*  Modal */}

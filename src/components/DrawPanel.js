@@ -3,21 +3,21 @@ import React, { Fragment, useState, useEffect } from "react";
 import { useTool } from "../context/ToolContext";
 import Wheel from "@uiw/react-color-wheel";
 import { hsvaToHex } from "@uiw/color-convert";
-import { brushToDabMap } from "@/utils/BrushDabMap";
+import { brushToDabMap } from "../utils/BrushDabMap";
 import ShadeSlider from "@uiw/react-color-shade-slider";
 
-import CustomEraser from "@/assets/EraserIcon.js";
-import FlatBrush from "@/assets/FlatBrush";
-import Marker from "@/assets/Marker";
-import Blender from "@/assets/Blender";
-import OilPaint from "@/assets/OilPaint";
-import Pencil from "@/assets/Pencil";
-import Sketchpen from "@/assets/Sketchpen";
-import Spray from "@/assets/Spray";
-import DryBrush from "@/assets/DryBrush";
-import Crayon from "@/assets/Crayon";
-import Waterstamp from "@/assets/WaterStamp";
-import BallPen from "@/assets/BallPen";
+import CustomEraser from "../assets/EraserIcon.js";
+import FlatBrush from "../assets/FlatBrush";
+import Marker from "../assets/Marker";
+import Blender from "../assets/Blender";
+import OilPaint from "../assets/OilPaint";
+import Pencil from "../assets/Pencil";
+import Sketchpen from "../assets/Sketchpen";
+import Spray from "../assets/Spray";
+import DryBrush from "../assets/DryBrush";
+import Crayon from "../assets/Crayon";
+import Waterstamp from "../assets/WaterStamp";
+import BallPen from "../assets/BallPen";
 
 const DrawPanel = () => {
     const { settings, setSettings } = useTool();
