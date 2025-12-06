@@ -4,8 +4,7 @@ import { useTool } from "../context/ToolContext";
 import { brushTypes } from "../utils/Brushes";
 import { dabImages } from "../utils/Dabs";
 import SVGPromptModal from "./SvgPromptModal";
-import DraggableSVG from "./DraggableSVG";
-
+ import { DraggableSVG } from "./DraggableSvg.jsx";
 let ffmpeg = null;
 let fetchFileFn = null;
 
