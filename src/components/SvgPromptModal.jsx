@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import DraggableSVG from "./DraggableSVG";
+import DraggableSVG from "./DragableSvg";
 
 let nextId = 0;
 
